@@ -39,7 +39,6 @@ RUN npm install --production
 
 # Copy built files from the build stage
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/.env ./
 
 # Start the production server
 CMD ["node", "dist/index.js"]
