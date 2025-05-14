@@ -17,12 +17,16 @@ FROM node:18-alpine AS prod
 
 WORKDIR /app
 
+# Install dependencies needed to build
 COPY package*.json ./
 RUN npm install --production
 
-COPY . .
+# Copy source files and tsconfig
+COPY tsconfig.json ./
+COPY src ./src
 
-# You should compile TypeScript before using node
+# Compile TypeScript
 RUN npm install -g typescript && tsc
 
+# Start from built JavaScript
 CMD ["node", "dist/index.js"]

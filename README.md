@@ -15,27 +15,6 @@ Explore trending and searchable GIFs using a responsive React frontend and a pro
 
 ---
 
-## 📂 Project Structure
-
-```
-project-root/
-├── backend/                # Express backend (Node.js)
-│   ├── Dockerfile
-│   └── index.js
-├── frontend/               # React frontend
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── src/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml      # GitHub Actions workflow for CI/CD
-├── .env                    # Environment variables (e.g., GIPHY_API_KEY)
-├── docker-compose.yml      # Docker Compose for dev/prod setup
-├── docker-compose.override.yml  # Overrides for development
-```
-
----
-
 ## 🔧 Setup Instructions
 
 ### Prerequisites
@@ -74,7 +53,43 @@ This uses `docker-compose.override.yml` for development: bind mounts, hot reload
 * Frontend: [http://localhost:3001](http://localhost:3001)
 * Backend: [http://localhost:5000/api/gifs/trending](http://localhost:5000/api/gifs/trending)
 
----
+### 5. Testing the Backend
+
+The backend includes automated tests for API endpoints using Jest and Supertest.
+
+Tests cover:
+- /api/ping for health check
+- /api/gifs/trending for trending GIFs
+- /api/gifs/search?q=... for search functionality
+
+Axios is configured in test mode to prevent open handles (e.g., TLSWRAP issues).
+
+🧪 Run Tests Locally
+
+    cd backend
+    npm install
+    npm test
+
+This uses:
+- NODE_ENV=test via cross-env
+- jest --detectOpenHandles to catch async leaks
+- A custom Axios instance that disables keep-alive
+
+📁 Test File Structure
+
+    backend/
+    └── __tests__/
+        └── index.test.ts   # API smoke tests
+
+🧹 Troubleshooting
+
+✅ Sample Output
+
+    PASS  __tests__/index.test.ts
+      API Smoke Tests
+        ✓ GET /api/ping → should return { status: "ok" }
+        ✓ GET /api/gifs/trending → should return data array
+        ✓ GET /api/gifs/search?q=cat → should return search results
 
 ## 💠 API Endpoints
 
