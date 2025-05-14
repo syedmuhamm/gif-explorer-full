@@ -6,14 +6,15 @@ RUN npm install
 COPY . .
 CMD ["npm", "run", "dev"]
 
-# --- Production Stage ---
+# --- Build Stage ---
 FROM node:18-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build || (echo "Build failed" && exit 1)
 
+# --- Production Stage ---
 FROM nginx:alpine AS prod
 COPY --from=build /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
