@@ -15,7 +15,7 @@ Explore trending and searchable GIFs using a responsive React frontend and a pro
 
 ---
 
-## 🗂 Project Structure
+## 📂 Project Structure
 
 ```
 project-root/
@@ -31,7 +31,7 @@ project-root/
 │       └── deploy.yml      # GitHub Actions workflow for CI/CD
 ├── .env                    # Environment variables (e.g., GIPHY_API_KEY)
 ├── docker-compose.yml      # Docker Compose for dev/prod setup
-├── Makefile                # Helper commands
+├── docker-compose.override.yml  # Overrides for development
 ```
 
 ---
@@ -40,114 +40,170 @@ project-root/
 
 ### Prerequisites
 
-* Docker & Docker Compose
+* Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* Ensure Docker Compose is available (comes with Docker Desktop)
 
-### 1. Clone the repo & navigate into it
+### 1. Clone the repository
 
-```
+```bash
 git clone <repo_url>
 cd gif-explorer
 ```
 
 ### 2. Add your Giphy API key
 
-Edit `docker-compose.yml` and replace `YOUR_GIPHY_API_KEY` with your actual key.
+Create a `.env` file in the root:
 
-Alternatively, create a `.env` file:
-
-```
+```bash
 GIPHY_API_KEY=your_giphy_api_key_here
 ```
 
-### 3. Run the app
+Alternatively, edit the `docker-compose.yml` file and replace the placeholder.
 
-```
+### 3. Start the development environment
+
+```bash
 docker-compose up --build
 ```
 
-### Access the App
+This uses `docker-compose.override.yml` for development: bind mounts, hot reload, etc.
 
-* Frontend: [http://localhost:3000](http://localhost:3000)
+### 4. Access the App
+
+* Ports for frontend or backend can be changed in docker-compose.override.yml for local development
+* Frontend: [http://localhost:3001](http://localhost:3001)
 * Backend: [http://localhost:5000/api/gifs/trending](http://localhost:5000/api/gifs/trending)
 
 ---
 
-## 🛠 Available Endpoints
+## 💠 API Endpoints
 
 * `/api/gifs/trending` — Get trending GIFs
 * `/api/gifs/search?q=cat` — Search GIFs
 
 ---
 
-## 🐳 Docker Commands (via Makefile)
-
-### Development
+## 🐳 Docker Commands (for Local Development)
 
 ```bash
-make up         # Start containers in dev mode
-make down       # Stop containers
-make logs       # View logs
-make rebuild    # Rebuild and restart all
+docker-compose up --build   # Start and build containers
+
+docker-compose down         # Stop and remove containers
+
+docker-compose logs -f      # Show logs
+
+docker-compose down && docker-compose up --build  # Rebuild everything
 ```
 
-### Production Build (optional override file not shown)
+---
+
+## 🏭 Production Build
+
+Build the production environment manually:
 
 ```bash
 docker-compose -f docker-compose.yml up --build
 ```
 
+Or run the production build test locally:
+
+```bash
+docker build --target=prod ./frontend
+```
+
 ---
 
-## 🛠 Development vs Production
+## 🧪 Dev vs Prod
 
-* **Development**: Live code changes using bind mounts and `npm start`
-* **Production**: Optimized `npm run build` for frontend, served via `nginx`
+| Environment | Frontend                  | Backend                  |
+| ----------- | ------------------------- | ------------------------ |
+| Development | Vite dev server w/ reload | `nodemon` (hot reload)   |
+| Production  | Static build via Nginx    | Node.js w/ compiled code |
 
-> Tip: You can create `docker-compose.override.yml` for dev-specific configs
+Files involved:
+
+* `docker-compose.override.yml` → Dev behavior
+* `docker-compose.yml` → Production-ready setup
 
 ---
 
 ## 🚀 CI/CD with GitHub Actions
 
-### Workflow File
+### Location
 
-Located at: `.github/workflows/deploy.yml`
+`.github/workflows/deploy.yml`
 
-* Triggers on `main` branch pushes
-* Builds frontend and backend Docker images
-* Pushes to Docker Hub
+### Behavior
 
-### 🔍 Check CI/CD Pipeline
+* Triggers on push to `main`
+* Builds frontend/backend Docker images
+* Pushes them to Docker Hub
 
-1. Go to your GitHub repo
-2. Click on **Actions** tab
-3. Select latest workflow run to see logs and status
+### Monitoring
 
----
-
-## ✅ Verifying Code Changes
-
-### In Development
-
-* Use `make up` to start containers
-* Visit `http://localhost:3000`
-* Make code changes
-* Use `make rebuild` if needed
-
-### In Production
-
-* Build images: `docker-compose up --build`
-* Access frontend at `http://localhost:3000`
-* Logs: `make logs`
+1. Go to GitHub repo
+2. Click on **Actions**
+3. Check latest **Deploy** workflow
 
 ---
 
-## 📦 Docker Image Repositories
+## ✅ Testing Changes
 
-Set these up in Docker Hub or another registry:
+### Development
+
+```bash
+docker-compose up --build
+# Edit code as needed
+```
+
+Visit [localhost:3000](http://localhost:3000) and test changes live.
+
+### Production
+
+```bash
+docker-compose up --build
+```
+
+Visit [localhost:3000](http://localhost:3000) for Nginx-served static build.
+
+---
+
+## 📆 Docker Images
+
+Your Docker Hub repository must be set up to match these:
 
 * `yourdockerhubusername/gif-frontend`
 * `yourdockerhubusername/gif-backend`
+
+Check that secrets in GitHub are properly configured:
+
+* `DOCKER_USERNAME`
+* `DOCKER_PASSWORD`
+
+---
+
+## 📬 Support & Tips
+
+### Confirm Production Builds
+
+Before pushing to GitHub:
+
+```bash
+docker build --target=prod ./frontend
+```
+
+### If Docker Desktop is closed
+
+* All containers and volumes stop.
+* Reopen Docker and run:
+
+```bash
+docker-compose up --build
+```
+
+### Workflow Deletion
+
+* Deleting a GitHub Actions workflow run removes logs/history, but has no effect on images already built.
 
 ---
 
@@ -155,8 +211,19 @@ Set these up in Docker Hub or another registry:
 
 MIT License
 
----
+For issues or feature requests, open a GitHub Issue.
 
-## 📬 Contact
-
-For issues or feature requests, open an issue on GitHub.
+ _
+//\
+V  \
+ \  \_
+  \,'.`-.
+   |\ `. `.       
+   ( \  `. `-.                        _,.-:\
+    \ \   `.  `-._             __..--' ,-';/
+     \ `.   `-.   `-..___..---'   _.--' ,'/
+      `. `.    `-._        __..--'    ,' /
+        `. `-_     ``--..''       _.-' ,'
+          `-_ `-.___        __,--'   ,'
+             `-.__  `----"""    __.-'
+                 `--..____..--'
