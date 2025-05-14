@@ -10,15 +10,16 @@ CMD ["npm", "run", "dev"]
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copy and install all dependencies, including devDependencies (needed for Vite)
+# Copy config early so Vite sees it
 COPY package*.json ./
+COPY vite.config.js ./
+
 ENV NODE_ENV=development
 RUN npm install
 
-# Copy the rest of the source code
+# Copy the rest of the code
 COPY . .
 
-# Run the build (ensure it fails loudly if needed)
 RUN npm run build
 
 # --- Production Stage ---

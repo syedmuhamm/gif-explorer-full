@@ -32,6 +32,9 @@ jobs:
           context: ./frontend
           push: true
           tags: syedmuhamm/gif-frontend:latest
+          target: prod
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push backend
         uses: docker/build-push-action@v5
