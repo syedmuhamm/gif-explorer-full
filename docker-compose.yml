@@ -1,23 +1,22 @@
-# docker-compose.yml (base for prod)
-
 version: '3.8'
+
 services:
   backend:
     build:
       context: ./backend
+      target: prod
     ports:
-    - "5000:5000"
-    environment:
-    - GIPHY_API_KEY=${GIPHY_API_KEY}
+      - "5000:5000"
     env_file:
-    - .env
-
+      - .env
+    environment:
+      - GIPHY_API_KEY=${GIPHY_API_KEY}
 
   frontend:
     build:
       context: ./frontend
+      target: prod
     ports:
       - "3000:80"
     depends_on:
       - backend
-    restart: unless-stopped

@@ -1,14 +1,15 @@
-# Backend Dockerfile
-FROM node:18-alpine
-
+# --- Development Stage ---
+FROM node:18-alpine AS dev
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
+COPY package*.json ./
 RUN npm install
-
 COPY . .
+CMD ["npm", "run", "dev"]
 
-ENV PORT=5000
-EXPOSE 5000
-
+# --- Production Stage ---
+FROM node:18-alpine AS prod
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
 CMD ["node", "index.js"]
