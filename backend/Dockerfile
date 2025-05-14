@@ -12,21 +12,34 @@ COPY . .
 CMD ["npm", "run", "dev"]
 
 
+# === Build Stage ===
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Install full dependencies including devDependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy source and config
+COPY . .
+
+# Compile TypeScript
+RUN npx tsc
+
+
 # === Production Stage ===
 FROM node:18-alpine AS prod
 
 WORKDIR /app
 
-# Install dependencies needed to build
+# Only install production dependencies
 COPY package*.json ./
 RUN npm install --production
 
-# Copy source files and tsconfig
-COPY tsconfig.json ./
-COPY src ./src
+# Copy built files from the build stage
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/.env ./
 
-# Compile TypeScript
-RUN npm install -g typescript && tsc
-
-# Start from built JavaScript
+# Start the production server
 CMD ["node", "dist/index.js"]
