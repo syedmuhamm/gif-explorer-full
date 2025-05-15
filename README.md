@@ -25,7 +25,7 @@ Explore trending and searchable GIFs using a responsive React frontend and a pro
 ### 1. Clone the repository
 
 ```bash
-git clone <repo_url>
+git clone https://github.com/syedmuhamm/gif-explorer-full.git
 cd gif-explorer
 ```
 
@@ -171,7 +171,7 @@ docker-compose up --build
 # Edit code as needed
 ```
 
-Visit [localhost:3000](http://localhost:3000) and test changes live.
+Visit [localhost:3001](http://localhost:3001) and test changes live.
 
 ### Production
 
@@ -179,7 +179,7 @@ Visit [localhost:3000](http://localhost:3000) and test changes live.
 docker-compose up --build
 ```
 
-Visit [localhost:3000](http://localhost:3000) for Nginx-served static build.
+Visit [localhost:3001](http://localhost:3001) for Nginx-served static build.
 
 ---
 
